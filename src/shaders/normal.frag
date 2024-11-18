@@ -36,14 +36,15 @@ void main()
 {
 	vec3 nTangent = vec3(0, 0, 1);
     if (useNormalMap == 1) {
-        // Fetch the normal from the normal map
         vec3 normalSample = texture(normalMap, interpTexCoords).rgb;
-        // Transform from [0,1] to [-1,1]
         nTangent = normalize(normalSample * 2.0 - 1.0);
     }
 
     vec3 vTangent = normalize(eyePositionTangent - interpPositionTangent);
-    vec3 colorOutput = vec3(0.0);
+
+	vec3 ambient = vec3(0.0);
+	vec3 diffuse = vec3(0.0);
+	vec3 specular = vec3(0.0);
 
     for (int i = 0; i < numLights; i++) {
         vec3 lTangent;
@@ -54,23 +55,20 @@ void main()
             lTangent = normalize(-lightPositionsTangent[i]);
         }
 
-		vec3 ambient = lightAmbientIntensities[i] * kAmbient;
+		ambient += lightAmbientIntensities[i] * kAmbient;
 
-        // Diffuse component
         float lambertian = max(dot(nTangent, lTangent), 0.0);
-        vec3 diffuse = lambertian * lightDiffuseIntensities[i] * kDiffuse;
+        diffuse += lambertian * lightDiffuseIntensities[i] * kDiffuse;
 
-        // Specular component
         vec3 reflection = reflect(-lTangent, nTangent);
         float spec = pow(max(dot(vTangent, reflection), 0.0), shininess);
-        vec3 specular = spec * lightSpecularIntensities[i] * kSpecular;
-
-        colorOutput += diffuse + specular + ambient;
+        specular += spec * lightSpecularIntensities[i] * kSpecular;
     }
 
+	vec3 finalColor = ambient + diffuse + specular;
     if (useTexture == 1) {
-        colorOutput *= texture(surfaceTexture, interpTexCoords).rgb;
+        finalColor *= texture(surfaceTexture, interpTexCoords).rgb;
     }
 
-    fragColor = vec4(colorOutput, interpColor.a);
+    fragColor = vec4(finalColor, interpColor.a);
 }
