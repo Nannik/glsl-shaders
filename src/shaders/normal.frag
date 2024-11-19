@@ -52,7 +52,7 @@ void main()
         if (lightTypes[i] == POINT_LIGHT) {
             lTangent = normalize(lightPositionsTangent[i] - interpPositionTangent);
         } else if (lightTypes[i] == DIRECTIONAL_LIGHT) {
-            lTangent = normalize(-lightPositionsTangent[i]);
+            lTangent = normalize(lightPositionsTangent[i]);
         }
 
 		ambient += lightAmbientIntensities[i] * kAmbient;

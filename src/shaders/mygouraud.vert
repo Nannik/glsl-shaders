@@ -72,7 +72,7 @@ void main()  {
         if (lightTypes[i] == POINT_LIGHT) {
             lightDir = normalize(lightPositionsWorld[i] - positionWorld);
         } else if (lightTypes[i] == DIRECTIONAL_LIGHT) {
-            lightDir = normalize(-lightPositionsWorld[i]); // Directional lights use direction vector
+            lightDir = normalize(lightPositionsWorld[i]);
         }
 
         ambient += lightAmbientIntensities[i] * kAmbient;
